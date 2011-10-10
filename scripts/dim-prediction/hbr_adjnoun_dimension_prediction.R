@@ -1,4 +1,4 @@
-## we must load the pls package
+## we must load the lme4 package
 library(lme4)
 
 ## reading input arguments
