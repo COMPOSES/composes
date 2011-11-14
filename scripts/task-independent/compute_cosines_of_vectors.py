@@ -64,7 +64,7 @@ for tLine in tFile:
 		row = sLine.split()[0]
 		rowV = array(sLine.split()[1:], dtype=float32)
 		c = dot(anV,rowV) / ( norm(anV) * norm(rowV) )
-		print p+an+'\t'+row+'\t'+'%.5f'%(c)
+		print '%s%s\t%s\t%.5f' % (p, an, row, c)
 
 tFile.close(); sFile.close()
 
