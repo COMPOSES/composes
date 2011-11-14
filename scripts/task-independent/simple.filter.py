@@ -1,7 +1,7 @@
 #! /bin/env python2.7
 # simple.filter.py
 
-import sys, math, string, fileinput
+import sys, fileinput
 from getopt import getopt
 
 # Script that filters certain elements from ANs
@@ -49,7 +49,7 @@ def usage():
 
 inputFile = open(filename,'r');
 
-for line in inputFile.readlines():
+for line in inputFile:
 
 	an = line.split()[0]
 	adj = an.split('_')[0]
