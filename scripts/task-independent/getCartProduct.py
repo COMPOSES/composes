@@ -39,18 +39,14 @@ except: usage()
 for opt, value in optlist:
 	if opt in ('-h', '--help'): usage()
 
-line = adjFile.readline()
-while line:
+for line in adjFile:
 	adjs.append(line.split()[0])
-	line = adjFile.readline()
 
-line = nounFile.readline()
-while line:
+for line in nounFile:
 	nns.append(line.split()[0])
-	line = nounFile.readline()
 
 ## get the Cartesian Product of the sets adjs and nns
 for adj in adjs:
 	for noun in nns:
-		print adj+'_'+noun
+		print '%s_%s' % (adj,noun)
 
