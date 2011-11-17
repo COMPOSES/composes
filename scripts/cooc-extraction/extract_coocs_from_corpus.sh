@@ -1,4 +1,3 @@
-#$ -wd cooc.extraction
 #$ -S /bin/bash
 #$ -j y
 
@@ -20,7 +19,7 @@ echo "begin"
 ## Extract the Co-occurrences from the corpus
 ## Note, for memory reasons it will print out an unsorted list
 ## of Tuples and Elements as they appear in the corpus
-zcat bnc.xml.gz ukwac*.xml.gz wikipedia-*.xml.gz | python scripts/coocExtraction.py
+zcat bnc.xml.gz ukwac*.xml.gz wikipedia-*.xml.gz | python util/coocExtraction.py
 
 ## Sort and get Unique Count of all Tuples
 ## Note, Tuples are co-occurring element pairs of the format:
@@ -29,11 +28,11 @@ zcat $d/extracted-files/tuples*.gz | sort -T . | uniq -c | gawk '{print $2 "\t" 
 gzip $d/tuples.fqs
 
 ## Calculate the Log Frequency of the tuples
-zcat $d/tuples.fqs.gz | python scripts/coocScores.LogFq.py
+zcat $d/tuples.fqs.gz | python util/coocScores.LogFq.py
 
 ## Sort and get Unique Count of all elements
 ## Note, elements are {N, A, ANs, V, Adv} in the corpus
-zcat $d/extracted-files/elements*.gz | python scripts/element_frequencies.py
+zcat $d/extracted-files/elements*.gz | python util/element_frequencies.py
 zcat $d/elements.fqs.gz | sort -T . - > $d/temp.elements.fqs
 mv $d/elements.fqs.gz $d/extracted-files/elements.fqs_unsorted.gz
 mv $d/temp.elements.fqs $d/elements.fqs

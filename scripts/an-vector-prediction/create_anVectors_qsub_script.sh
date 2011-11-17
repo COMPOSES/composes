@@ -34,8 +34,8 @@ if [ ! -d $dataDir ]; then
     fi
 
 # Specify location of scripts
-file_prep="bin/file-prep-an-vectors.sh"
-generate_vectors="bin/generate-an-vectors.sh"
+file_prep="util/file-prep-an-vectors.sh"
+generate_vectors="util/generate-an-vectors.sh"
 
 #----------------------------------------------------------
 

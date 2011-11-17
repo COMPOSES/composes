@@ -22,7 +22,7 @@
 
 > **Additional Information**
 >
-> * Scripts located between scripts/an-vector-prediction/bin/ and
+> * Scripts located between scripts/an-vector-prediction/util/ and
 scripts/task-independent/ and scripts/dim-prediction/
 > * The scripts will generate and evaluate vectors for **all** composition models and parameters
 
