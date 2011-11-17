@@ -3,7 +3,7 @@ ___________________________________________
 # Pipeline to Generate/Evaluate AN Vectors 
 ___________________________________________
 
-## ** Compositionality Models **
+## Compositionality Models
     1. Addition
     2. Multiplication
     3. Dilation Model
@@ -38,7 +38,7 @@ ___________________________________________
 
 ## Full Pipeline
 
-Scripts located between scripts/an-vector-prediction/bin/ and scripts/task-independent/ and scripts/dim-prediction/
+   Scripts located between scripts/an-vector-prediction/bin/ and scripts/task-independent/ and scripts/dim-prediction/
 
 ### Step 1. AN Vector Prediction
    Usage: 
