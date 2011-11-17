@@ -34,7 +34,7 @@ if [ ! -d $dataDir ]; then
     fi
 
 # Specify location of scripts
-evaluate_vector_predictions="bin/evaluate-an-vector-predictions.sh"
+evaluate_vector_predictions="util/evaluate-an-vector-predictions.sh"
 
 #----------------------------------------------------------
 
