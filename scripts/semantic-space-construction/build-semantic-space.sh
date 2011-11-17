@@ -82,7 +82,7 @@ if [ $getVocab -eq 1 ]; then
 	head -$targetA tmp.core.adjs  | cut -f1 | sort -T . | uniq > $d/a-and-n-sets/target.adjs
 	head -$targetN tmp.core.ns | cut -f1 | sort -T . | uniq > $d/a-and-n-sets/target.ns
 
-	cat data/rg.elements data/aamp.elements | sort -T . | uniq > $d/a-and-n-sets/aamp-rg.ns
+	cat util/rg.elements util/aamp.elements | sort -T . | uniq > $d/a-and-n-sets/aamp-rg.ns
 
 	echo "    done!"
 
@@ -92,8 +92,8 @@ if [ $getVocab -eq 1 ]; then
 	echo "Step 2: AN Sets"
 
 	# M&L2010 AN set plus the component As and Ns
-	cat data/ml2010.ans > $d/an-sets/ml.ans
-	cat data/ml2010.adjs-and-ns > $d/a-and-n-sets/ml.adjs-and-ns
+	cat util/ml2010.ans > $d/an-sets/ml.ans
+	cat util/ml2010.adjs-and-ns > $d/a-and-n-sets/ml.adjs-and-ns
 	
 	echo "    generating AN pairs from the Target Vocabulary..."
 	python $getCartProduct $d/a-and-n-sets/target.adjs $d/a-and-n-sets/target.ns > tmp.Cartesian.Product
