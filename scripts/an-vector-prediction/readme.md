@@ -12,20 +12,20 @@ ___________________________________________
 
 ___________________________________________
 
-** Generate qsub script for full run of pipeline **
+## Generate qsub script for full run of pipeline
 
 Scripts located between scripts/an-vector-prediction/bin/ and
 scripts/task-independent/ and scripts/dim-prediction/
 
 
-1. Create qsub script for AN Vector Prediction (Step 1 of Pipeline)
+### 1. Create qsub script for AN Vector Prediction (Step 1 of Pipeline)
    Usage: create_anVectors_qsub_script.sh [test-an-file] [output-directory] [data-directory]
 
    * To run qsub script:
      Usage: qsub [output-directory]/anVectors-full-run.sh
 
 
-2. Create qsub script for Evaluation of Predicted AN Vectors (Step 2 of Pipeline)
+### 2. Create qsub script for Evaluation of Predicted AN Vectors (Step 2 of Pipeline)
    Usage: create_vectorEval_qsub_script.sh [test-an-file] [output-directory] [data-directory]
 
    * To run qsub script:
@@ -36,25 +36,24 @@ Note: The qsub script will be printed to and run in the specified output-directo
 
 ___________________________________________
 
-** PIPELINE **
+## Full Pipeline
 
-Scripts located in /mnt/8tera/shareZBV/data/eva/an-vector-prediction/scripts/
+Scripts located between scripts/an-vector-prediction/bin/ and scripts/task-independent/ and scripts/dim-prediction/
 
-
-Step 1. AN Vector Prediction
+### Step 1. AN Vector Prediction
    Usage: 
-	file-prep-an-vectors.sh [test-an-file] [output-directory]
+	file-prep-an-vectors.sh [test-an-file] [output-directory] [data-directory]
 	generate-an-vectors.sh [test-an-file] [output-directory] [data-directory] [model] [semantic-space] [norm] [param]
 
 
-Step 2. Evaluation of Predicted AN Vectors
+### Step 2. Evaluation of Predicted AN Vectors
    Usage: 
-	file-prep-vector-eval.sh [test-an-file] [output-directory]
+	file-prep-vector-eval.sh [test-an-file] [output-directory] [data-directory]
 	evaluate-an-vector-predictions.sh [test-an-file] [output-directory] [data-directory] [model] [semantic-space] [norm] [param]
 
 ___________________________________________
 
-** Description of Command Line Arguments **
+### Description of Command Line Arguments
 
 --[test-an-file]
 	* Full path
