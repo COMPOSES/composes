@@ -14,7 +14,7 @@ ___________________________________________
 
 ## Generate qsub script for full run of pipeline
 
-Scripts located between scripts/an-vector-prediction/bin/ and
+> Scripts located between scripts/an-vector-prediction/bin/ and
 scripts/task-independent/ and scripts/dim-prediction/
 
 
