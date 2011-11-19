@@ -31,7 +31,6 @@ partial_time = time.time()
 ss_keys=ss_dict.keys()
 rank_file=open('rank_of_observed_equivalent.txt','w')
 neighbor_file=open('top-ten-neighbors.txt','w')
-min_val = 0 
 norm_p_anV = 0
 count = 1
 for file_path in glob.glob(os.path.join('/home/elia.bruni/eva-test/testing/','*-j-add_an-full.matrix.mat')):
@@ -46,6 +45,7 @@ for file_path in glob.glob(os.path.join('/home/elia.bruni/eva-test/testing/','*-
         rank_counter=1; tmp_counter=1
         neighbors={}
         neighbors[c]=p_an
+        min_val = 0 
         for row in ss_keys:
             new_c=dot(p_anV,ss_dict[row]) / (norm_p_anV * ss_norms[row])
             if new_c > c: rank_counter+=1
