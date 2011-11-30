@@ -11,7 +11,7 @@ This document describes the steps taken to construct the test set for the CrowdF
 
 ## Construct the test set for CrowdFlower annotations ##
 
-	$ cat disco2011-acceptable_AN_testset.txt disco2011-deviant_AN_testset.txt unattested-rated.txt |  perl filter_by_field.pl -s - unattested.ans | gawk '$1!~/(fifth|first|second|third|fourth|sixth|seventh|eighth|ninth|tenth|alive|above|Recent|Fax|Many|worth|Key)-j/ && $1!~/_(cant|cos|Everything|Everyone|Fax|Hone|iii|none|Jul|Sep|Thank)-n/' | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -30000 | cut -f2 > all-ans.txt
+	$ cat disco2011-acceptable_AN_testset.txt disco2011-deviant_AN_testset.txt unattested-to-rate.txt |  perl filter_by_field.pl -s - unattested.ans | gawk '$1!~/(fifth|first|second|third|fourth|sixth|seventh|eighth|ninth|tenth|alive|above|Recent|Fax|Many|worth|Key)-j/ && $1!~/_(cant|cos|Everything|Everyone|Fax|Hone|iii|none|Jul|Sep|Thank)-n/' | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -30000 | cut -f2 > all-ans.txt
 	$ for an in `cat all-ans.txt`; do
 	..    echo $an >> ans1.txt
 	..    echo $an >> ans1.txt
