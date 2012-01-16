@@ -14,8 +14,8 @@ LC_ALL=C
 #---------------------------------------
 
 ### GLOBAL PARAMETERS ###
-getVocab=0	# if = 1: get the vocabulary (rows) for the Semantic Space
-buildSemSpace=0	# if = 1: build the Semantic Space using target.rows (rows) and target.columns (columns)
+getVocab=1	# if = 1: get the vocabulary (rows) for the Semantic Space
+buildSemSpace=1	# if = 1: build the Semantic Space using target.rows (rows) and target.columns (columns)
 svdMatrix=1	# if = 1: perform SVD reduction on the Semantic Space
 
 targetA=700	# The num of most frequent Adjs and Nouns for Target Vocabulary
@@ -26,7 +26,7 @@ topFreqFilter=0	# A filter to exclude a number of the MOST frequently occurring 
 coreA=4000	# The num of the most frequent Adjs and Nouns for the Core Vocabulary
 coreN=8000	# ** Note, target vocab is a subset of this vocab
 
-anFreq=100	# Minimum frequency of ANs in the corpus
+anFreq=50	# Minimum frequency of ANs in the corpus
 
 column_dims=10000
 
@@ -110,7 +110,8 @@ if [ $getVocab -eq 1 ]; then
 	cat util/color.ans > $d/an-sets/color.ans
 	
 	echo "    generating AN pairs from the Target Vocabulary..."
-	python $getCartProduct $d/a-and-n-sets/target.adjs $d/a-and-n-sets/target.ns > tmp.Cartesian.Product
+	$filter_by_field -s util/problematic-adjs.txt $d/a-and-n-sets/target.adjs > tmp.target.adjs
+	python $getCartProduct tmp.target.adjs $d/a-and-n-sets/target.ns > tmp.Cartesian.Product
 	zcat $cooc/elements.fqs.gz | $filter_by_field tmp.Cartesian.Product - | sort -T . > tmp.target.ans
 	cut -f1 tmp.target.ans > $d/an-sets/attested.ans
 	$filter_by_field -s $d/an-sets/attested.ans tmp.Cartesian.Product | cut -f1 | sort -T . > $d/an-sets/unattested.ans
