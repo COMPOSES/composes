@@ -13,22 +13,25 @@ LC_ALL=C
 # * $2: output-directory (full path)
 #
 # * $3: data-directory (full path)
-#	- where Semantic Spaces are stored
+#	- where Semantic Spaces and AN Datasets are stored
 #
 # * $4: model
 #	- options: add | mult | dl | lm | alm
 #
 # * $5: semantic-space
-#	- options: reduced | full
+#	- add, mult, dl: reduced | full
+#	- lm, alm: reduced
 #
 # * $6: norm
-#	- options: normalized | nonnormalized
+#	- add, mult, dl: normalized | nonnormalized
+#	- lm, alm: nonnormalized
 #
 # * $7: param
-#	- add,mult: {4a6n, 3a7n, 6a4n, 7a3n}
-#	- dl: lambda {2.2,4,6,8,10,12,14,16.7,18,20} - direction {an, na}
-#	- lm: {300, 200, 100, 50, 40, 30, 20, 10}
-#	- alm: {50, 40, 30, 20, 10}
+#	- add: weight{none, 4a6n, 3a7n, 6a4n, 7a3n}
+#	- mult: {none}
+#	- dl: lambda{2.2, 4, 6, 8, 10, 12, 14, 16.7, 18, 20}, direction{an, na}
+#	- lm: latent_dims{300, 200, 100, 50, 40, 30, 20, 10}
+#	- alm: latent_dims{50, 40, 30, 20, 10}
 #
 
 if [ ! -n "$7" ]; then
@@ -37,9 +40,12 @@ if [ ! -n "$7" ]; then
     exit 65
     fi
 
+echo "[begin] `basename $0`"
+
 ### GLOBAL PARAMETERS ###
 DEBUG=1        	# DEBUG=1: do NOT delete tmp files, print verbose output
 		# DEBUG=0: delete tmp files, no error messages will be printed
+if [ $DEBUG -eq 1 ]; then echo ""; echo "[begin] $0"; fi
 
 # Specify full path of the output directory (remove final "/")
 lchr=`expr substr $2 ${#2} 1`; if [ "$lchr" = "/" ]; then outDir="${2%?}"; else outDir="$2"; fi
@@ -95,8 +101,8 @@ alm_vector_analysis="../../dim-prediction/alm_vector_analysis.R"
 ## If Debug: Print summary of parameters
 if [ $DEBUG -eq 1 ]; then 
 	echo "Generate AN Vectors"; echo ""
-	if [ "$model" == "adj" ]; then echo "[ADJ] $space"; fi
-	if [ "$model" == "ns" ]; then echo "[NOUN] $space"; fi
+	if [ "$model" == "adj-only" ]; then echo "[ADJ-ONLY] $space"; fi
+	if [ "$model" == "ns-only" ]; then echo "[NOUN-ONLY] $space"; fi
 	if [ "$model" == "add" ]; then echo "[ADD] $space$norm$weight"; fi
 	if [ "$model" == "mult" ]; then echo "[MULT] $space$norm$weight"; fi
 	if [ "$model" == "dl" ]; then echo "[DL] $space$norm-$weight"; fi
@@ -110,15 +116,15 @@ if [ $DEBUG -eq 1 ]; then
 if [ "$model" == "lm" -a "$space" = "reduced" ]; then
 	if [ $DEBUG -eq 1 ]; then echo ""; echo "Getting betas matrix for emi-style LM model"; fi
 	if [ ! -d $outDir/emi-lm-training ]; then mkdir $outDir/emi-lm-training; fi
-	gawk '$1~/-j_/' $outDir/training.matrix.$space | cut -f1 | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort | head -2500 | gawk '{print $2}' | sort > $outDir/emi-lm-training/lm-$lmParam.ans
-	perl $adj_augmented_align_firstel_specific_ivs_dvs $outDir/emi-lm-training/lm-$lmParam.ans $outDir/training.matrix.$space | sort -T . > $outDir/emi-lm-training/lm-$lmParam.ans-ivs-dvs.txt
-	R --slave --args $outDir/emi-lm-training/lm-$lmParam.ans-ivs-dvs.txt $outDir/emi-lm-training/emi.model_$lmParam 600 $lmParam < $plsr_adjnoun_dimension_prediction > $outDir/emi-lm-training/$lmParam.out 2> $outDir/emi-lm-training/$lmParam.err
+	if [ ! -s $outDir/emi-lm-training/lm.ans ]; then 
+	    gawk '$1~/-j_/' $outDir/training.matrix.$space | cut -f1 | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort | head -2500 | gawk '{print $2}' | sort > $outDir/emi-lm-training/lm.ans
+	    perl $adj_augmented_align_firstel_specific_ivs_dvs $outDir/emi-lm-training/lm.ans $outDir/training.matrix.$space | sort -T . > $outDir/emi-lm-training/lm.ans-ivs-dvs.txt
+	    fi
+	R --slave --args $outDir/emi-lm-training/lm.ans-ivs-dvs.txt $outDir/emi-lm-training/emi.model_$lmParam 600 $lmParam < $plsr_adjnoun_dimension_prediction > $outDir/emi-lm-training/$lmParam.out 2> $outDir/emi-lm-training/$lmParam.err
 	## Check that the betas file was created. If not, script dies.
 	## Error likely caused by pls package memory problems (try again or try with less ANs (fewer or with less bytes))
 	if [ ! -s $outDir/emi-lm-training/emi.model_$lmParam.betas ]; then 
-		if [ $DEBUG -eq 1 ]; then echo ""; 
-		    echo "ERROR: Unable to get betas file for the LM!"; 
-		    echo "       Check error messages: $outDir/emi-lm-training/$lmParam.err"; echo ""; fi
+		if [ $DEBUG -eq 1 ]; then echo ""; echo "ERROR: Unable to get betas file for the LM!"; echo "       Check error messages: $outDir/emi-lm-training/$lmParam.err"; echo ""; fi
 		exit 1
 		fi
 	fi
@@ -133,7 +139,7 @@ for ADJ in `cat $outDir/test-adjs`; do
   #--------------------------------------------------------
 
   ## Adj-Only Model: 
-  if [ "$model" == "adj" ]; then
+  if [ "$model" == "adj-only" ]; then
 	if [ $DEBUG -eq 1 ]; then echo "Processing \"$ADJ\": $model-$space"; fi
 	> $outDir/$ADJ/models/adj-only_an-$space.mat
 	for noun in `cat $outDir/$ADJ/tmp/target.ns`; do
@@ -144,8 +150,9 @@ for ADJ in `cat $outDir/test-adjs`; do
   #--------------------------------------------------------
 
   ## Noun-Only Model: 
-  if [ "$model" == "ns" ]; then
+  if [ "$model" == "ns-only" ]; then
 	if [ $DEBUG -eq 1 ]; then echo "Processing \"$ADJ\": $model-$space"; fi
+	> $outDir/$ADJ/models/ns-only_an-$space.mat
 	awk -v ADJ=$ADJ '{print ADJ "_" $i}' $outDir/$ADJ/tmp/target.ns-in-$space-space.mat >> $outDir/$ADJ/models/ns-only_an-$space.mat
   fi
 
@@ -170,7 +177,7 @@ for ADJ in `cat $outDir/test-adjs`; do
   ## Dilation Model: 
   if [ "$model" == "dl" ]; then
 	if [ $DEBUG -eq 1 ]; then echo "Processing \"$ADJ\": $model-$space$norm-$weight"; fi
-	python $combine_vectors -d -u$outDir/$ADJ/tmp/adj_vector.$space -v$outDir/$ADJ/tmp/target.ns-in-$space-space.mat -l$weight $norm | awk '{printf $1"_"$2"\t"; for(i=3;i<=NF-1;i++) printf "%s\t",$i; print $NF}' - > $outDir/$ADJ/models/dl_an-$space$norm-$weight-an.mat
+	#python $combine_vectors -d -u$outDir/$ADJ/tmp/adj_vector.$space -v$outDir/$ADJ/tmp/target.ns-in-$space-space.mat -l$weight $norm | awk '{printf $1"_"$2"\t"; for(i=3;i<=NF-1;i++) printf "%s\t",$i; print $NF}' - > $outDir/$ADJ/models/dl_an-$space$norm-$weight-an.mat
 	python $combine_vectors -d -u$outDir/$ADJ/tmp/target.ns-in-$space-space.mat -v$outDir/$ADJ/tmp/adj_vector.$space -l$weight $norm | awk '{printf $2"_"$1"\t"; for(i=3;i<=NF-1;i++) printf "%s\t",$i; print $NF}' - > $outDir/$ADJ/models/dl_an-$space$norm-$weight-na.mat
   fi
 
@@ -201,4 +208,6 @@ for ADJ in `cat $outDir/test-adjs`; do
 
 done
 
-if [ $DEBUG -eq 1 ]; then echo ""; echo "[end]"; fi
+if [ $DEBUG -eq 1 ]; then echo ""; echo "[end] `basename $0`"; fi
+
+

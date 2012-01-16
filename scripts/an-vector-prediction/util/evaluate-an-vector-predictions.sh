@@ -27,8 +27,8 @@ LC_ALL=C
 #
 # * $7: param
 #	- add,mult: {4a6n, 3a7n, 6a4n, 7a3n}
-#	- dl: lambda {2.2,4,6,8,10,12,14,16.7,18,20} - direction {an, na}
-#	- lm: {300, 200, 100, 50, 40, 30, 20, 10}
+#	- dl: {16.7, 2.2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+#	- lm: {300, 200, 100}
 #	- alm: {50, 40, 30, 20, 10}
 #
 
@@ -37,6 +37,8 @@ if [ ! -n "$7" ]; then
     echo "Usage():"; echo "`basename $0` [test-an-file] [output-directory] [data-directory] [model] [semantic-space] [norm] [param]"
     exit 65
     fi
+
+echo "[begin] `basename $0`"; echo
 
 ### GLOBAL PARAMETERS ###
 DEBUG=1        	# DEBUG=1: do NOT delete tmp files, print verbose output
@@ -57,6 +59,7 @@ space="$5"	# This parameter specifies which Semantic Space to use
 
 
 norm=""		# This parameter is specifically for the Addition and Multiplication models
+nnorm=""
 if [ "$6" == "normalized" ]; then norm="-n"; fi	
 		#   norm="": the models use the raw A and N vectors from the Semantic Space
 		#   norm="-n": the models use NORMALIZED A and N vectors
@@ -68,16 +71,13 @@ if [ "$model" == "add" -o "$model" == "mult" -o "$model" == "dl" ]; then
     else				#		    AN = 0.X*a + 0.Y*n  || AN = 0.X*a * 0.Y*n
 	weight="-$7"			#   possible weights={"none", "-4a6n", "-3a7n", "-6a4n", "-7a3n"}
     fi
+    if [ "$norm" == "" -a "$weight" == "" ]; then
+	nnorm="_"
+    fi
 elif [ "$model" == "lm" -a -n "$7" ]; then	# Number of training items for the Emi-Style Linear Model
     lmParam="$7"				#   lmParam={100, 200, 300}
 elif [ "$model" == "alm" -a -n "$7" ]; then	# Number of training items for the Adj-Specific Linear Model
     almParam="$7"				#   almParam={10, 20, 30, 40, 50}
-fi
-
-if [ "$space" == "full" ]; then		# Get dimensions argument to pass to compute_cosines script
-    dspace="-d 10000"
-elif [ "$space" == "reduced" ]; then
-    dspace="-d 300"
 fi
 
 #----------------------------------------------------------
@@ -85,11 +85,9 @@ fi
 ## Set paths for external scripts used throughout pipeline
 ## (easier to change one path, and easier on the eye when reading through pipeline)
 filter_by_field="../../task-independent/filter_by_field.pl"
-compute_cosines="../../task-independent/compute_cosines_of_vectors.py"
-find_rank_of_observed_equivalent="../../task-independent/find_rank_of_observed_equivalent.py"
+run_vector_evaluation_fast="../../task-independent/run_vector_evaluation_fast.py"
 
 #----------------------------------------------------------
-
 ## If Debug: Print summary of parameters
 if [ $DEBUG -eq 1 ]; then 
 	echo "Evaluate Predicted AN Vectors"; echo ""
@@ -109,96 +107,66 @@ if [ $DEBUG -eq 1 ]; then
 # Check for file with set of unique adjs in the test-ans file
 # **Sanity check: no adjs are to be used that were not used in "generate-an-vectors.sh"
 if [ ! -s $outDir/test-adjs ]; then echo ""; echo "ERROR: $outDir/test-adjs: file not found!"; echo "     > file was created by \"generate-an-vectors.sh\""; echo "" exit 1; fi
-
-# get the count of Semantic Space rows
-declare -i rowCount=`wc -l $dataDir/all.rows | cut -f1 -d' '`
+if [ ! -d $outDir/eval ]; then mkdir $outDir/eval; fi
 
 #----------------------------------------------------------
 
-for ADJ in `cat $outDir/test-adjs`; do
+if [ "$model" == "adj" -o "$model" == "ns" ]; then
+  python $run_vector_evaluation_fast -o$outDir -m$model-only -s$space
+  for ADJ in `cat $outDir/test-adjs`; do
+	if [ ! -d $outDir/$ADJ/eval ]; then mkdir $outDir/$ADJ/eval; fi
+	egrep "^$ADJ\_" $outDir/eval/$model-only-$space.rank_of_observed_equivalent.txt | sort -T . > $outDir/$ADJ/eval/$model-$space.rank_of_observed_equivalent
+	egrep "^$ADJ\_" $outDir/eval/$model-only-$space.top-ten-neighbors.txt | sort -T . > $outDir/$ADJ/eval/$model-$space.top-ten-neighbors
+  done
+fi
 
-  ## Initiate necessary directories
-  if [ ! -d $outDir/$ADJ/eval ]; then mkdir $outDir/$ADJ/eval; fi
-  if [ ! -d $outDir/$ADJ/tmp/ ]; then mkdir $outDir/$ADJ/tmp; fi
+if [ "$model" == "add" ]; then
+  python $run_vector_evaluation_fast -o$outDir -m$model -s$space -p$nnorm$norm$weight
+  for ADJ in `cat $outDir/test-adjs`; do
+	if [ ! -d $outDir/$ADJ/eval ]; then mkdir $outDir/$ADJ/eval; fi
+	egrep "^$ADJ\_" $outDir/eval/$model-$space$norm$weight.rank_of_observed_equivalent.txt | sort -T . > $outDir/$ADJ/eval/$model-$space$norm$weight.rank_of_observed_equivalent
+	egrep "^$ADJ\_" $outDir/eval/$model-$space$norm$weight.top-ten-neighbors.txt | sort -T . > $outDir/$ADJ/eval/$model-$space$norm$weight.top-ten-neighbors
+  done
+fi
 
-  #--------------------------------------------------------
+if [ "$model" == "mult" ]; then
+  python $run_vector_evaluation_fast -o$outDir -m$model -s$space -p$nnorm$norm
+  for ADJ in `cat $outDir/test-adjs`; do
+	if [ ! -d $outDir/$ADJ/eval ]; then mkdir $outDir/$ADJ/eval; fi
+	egrep "^$ADJ\_" $outDir/eval/$model-$space$norm.rank_of_observed_equivalent.txt | sort -T . > $outDir/$ADJ/eval/$model-$space$norm.rank_of_observed_equivalent
+	egrep "^$ADJ\_" $outDir/eval/$model-$space$norm.top-ten-neighbors.txt | sort -T . > $outDir/$ADJ/eval/$model-$space$norm.top-ten-neighbors
+  done
+fi
 
-  ## Adj-Only Model: 
-  if [ "$model" == "adj" ]; then
-      if [ $DEBUG -eq 1 ]; then echo "Evaluating \"$ADJ\": $model-$space"; fi
-      python $compute_cosines -t $outDir/$ADJ/models/adj-only_an-$space.mat -s $dataDir/$space.matrix $dspace -p > $outDir/$ADJ/tmp/adj-only-$space.cosines
-      python $find_rank_of_observed_equivalent -i$outDir/$ADJ/tmp/adj-only-$space.cosines -o$outDir/$ADJ/eval/adj-$space -r$rowCount -t
-      if [ $DEBUG -eq 1 ]; then echo "    ... done"; fi
-  fi
+if [ "$model" == "dl" ]; then
+  direction='-na'
+  python $run_vector_evaluation_fast -o$outDir -m$model -s$space -p$norm$weight$direction
+  for ADJ in `cat $outDir/test-adjs`; do
+	if [ ! -d $outDir/$ADJ/eval ]; then mkdir $outDir/$ADJ/eval; fi
+	egrep "^$ADJ\_" $outDir/eval/$model-$space$norm$weight$direction.rank_of_observed_equivalent.txt | sort -T . > $outDir/$ADJ/eval/$model-$space$norm$weight$direction.rank_of_observed_equivalent
+	egrep "^$ADJ\_" $outDir/eval/$model-$space$norm$weight$direction.top-ten-neighbors.txt | sort -T . > $outDir/$ADJ/eval/$model-$space$norm$weight$direction.top-ten-neighbors
+  done
+fi
 
-  #--------------------------------------------------------
+if [ "$model" == "lm" -a "$space" = "reduced" ]; then
+  python $run_vector_evaluation_fast -o$outDir -m$model -s$space -p-$lmParam
+  for ADJ in `cat $outDir/test-adjs`; do
+	if [ ! -d $outDir/$ADJ/eval ]; then mkdir $outDir/$ADJ/eval; fi
+	egrep "^$ADJ\_" $outDir/eval/$model-$space-$lmParam.rank_of_observed_equivalent.txt | sort -T . > $outDir/$ADJ/eval/$model-$space-$lmParam.rank_of_observed_equivalent
+	egrep "^$ADJ\_" $outDir/eval/$model-$space-$lmParam.top-ten-neighbors.txt | sort -T . > $outDir/$ADJ/eval/$model-$space-$lmParam.top-ten-neighbors
+  done
+fi
 
-  ## Noun-Only Model: 
-  if [ "$model" == "ns" ]; then
-      if [ $DEBUG -eq 1 ]; then echo "Evaluating \"$ADJ\": $model-$space"; fi
-      python $compute_cosines -t $outDir/$ADJ/models/ns-only_an-$space.mat -s $dataDir/$space.matrix $dspace -p > $outDir/$ADJ/tmp/ns-only-$space.cosines
-      python $find_rank_of_observed_equivalent -i$outDir/$ADJ/tmp/ns-only-$space.cosines -o$outDir/$ADJ/eval/ns-$space -r$rowCount -t
-      if [ $DEBUG -eq 1 ]; then echo "    ... done"; fi
-  fi
+if [ "$model" == "alm" -a "$space" = "reduced" ]; then
+  python $run_vector_evaluation_fast -o$outDir -m$model -s$space -p-$almParam
+  for ADJ in `cat $outDir/test-adjs`; do
+	if [ ! -d $outDir/$ADJ/eval ]; then mkdir $outDir/$ADJ/eval; fi
+	egrep "^$ADJ\_" $outDir/eval/$model-$space-$almParam.rank_of_observed_equivalent.txt | sort -T . > $outDir/$ADJ/eval/$model-$space-$almParam.rank_of_observed_equivalent
+	egrep "^$ADJ\_" $outDir/eval/$model-$space-$almParam.top-ten-neighbors.txt | sort -T . > $outDir/$ADJ/eval/$model-$space-$almParam.top-ten-neighbors
+  done
+fi
 
-  #--------------------------------------------------------
 
-  ## Additive Model: 
-  if [ "$model" == "add" ] && [ -s $outDir/$ADJ/models/add_an-$space$norm$weight.mat ] && [ ! -s $outDir/$ADJ/eval/add-$space$norm$weight.top-ten-neighbors ]; then
-      if [ $DEBUG -eq 1 ]; then echo "Evaluating \"$ADJ\": $model-$space$norm$weight"; fi
-      python $compute_cosines -t $outDir/$ADJ/models/add_an-$space$norm$weight.mat -s $dataDir/$space.matrix $dspace -p > $outDir/$ADJ/tmp/add-$space.cosines
-      python $find_rank_of_observed_equivalent -i$outDir/$ADJ/tmp/add-$space.cosines -o$outDir/$ADJ/eval/add-$space$norm$weight -r$rowCount -t
-      if [ $DEBUG -eq 1 ]; then echo "    ... done"; fi
-  fi
-
-  #--------------------------------------------------------
-
-  ## Multiplicative Model: 
-  if [ "$model" == "mult" ] && [ -e $outDir/$ADJ/models/mult_an-$space$norm$weight.mat ] && [ ! -s $outDir/$ADJ/eval/mult-$space$norm$weight.top-ten-neighbors ]; then
-      if [ $DEBUG -eq 1 ]; then echo "Evaluating \"$ADJ\": $model-$space$norm$weight"; fi
-      python $compute_cosines -t $outDir/$ADJ/models/mult_an-$space$norm$weight.mat -s $dataDir/$space.matrix $dspace -p > $outDir/$ADJ/tmp/mult-$space.cosines
-      python $find_rank_of_observed_equivalent -i$outDir/$ADJ/tmp/mult-$space.cosines -o$outDir/$ADJ/eval/mult-$space$norm$weight -r$rowCount -t
-      if [ $DEBUG -eq 1 ]; then echo "    ... done"; fi
-  fi
-
-  #--------------------------------------------------------
-
-  ## Dilation Model: 
-  if [ "$model" == "dl" ] && [ -e $outDir/$ADJ/models/dl_an-$space$norm$weight-an.mat ] && [ ! -s $outDir/$ADJ/eval/dl-$space$norm$weight-an.top-ten-neighbors ]; then
-      if [ $DEBUG -eq 1 ]; then echo "Evaluating \"$ADJ\": $model-$space$norm$weight"; fi
-      for direction in an na; do
-          python $compute_cosines -t $outDir/$ADJ/models/dl_an-$space$norm$weight-$direction.mat -s $dataDir/$space.matrix $dspace -p > $outDir/$ADJ/tmp/dl-$space.cosines
-          python $find_rank_of_observed_equivalent -i$outDir/$ADJ/tmp/dl-$space.cosines -o$outDir/$ADJ/eval/dl-$space$norm$weight-$direction -r$rowCount -t
-      done
-      if [ $DEBUG -eq 1 ]; then echo "    ... done"; fi
-  fi
-
-  #--------------------------------------------------------
-
-  ## Linear Model (Emi-Style):
-  if [ "$space" = "reduced" -a "$model" == "lm" -a -e $outDir/$ADJ/models/lm_an-$space-$lmParam.mat ] && [ ! -s $outDir/$ADJ/eval/lm-$space-$lmParam.top-ten-neighbors ]; then
-      if [ $DEBUG -eq 1 ]; then echo "Evaluating \"$ADJ\": $model-$space-$lmParam"; fi
-      python $compute_cosines -t $outDir/$ADJ/models/lm_an-$space-$lmParam.mat -s $dataDir/$space.matrix $dspace > $outDir/$ADJ/tmp/lm-$space.cosines
-      python $find_rank_of_observed_equivalent -i$outDir/$ADJ/tmp/lm-$space.cosines -o$outDir/$ADJ/eval/lm-$space-$lmParam -r$rowCount -t
-      if [ $DEBUG -eq 1 ]; then echo "    ... done"; fi
-  fi
-
-  #--------------------------------------------------------
-
-  ## Adjective-Specific Linear Model:
-  if [ "$space" = "reduced" -a "$model" == "alm" -a -e $outDir/$ADJ/models/alm_an-$space-$almParam.mat ] && [ ! -s $outDir/$ADJ/eval/alm-$space-$almParam.top-ten-neighbors ]; then
-      if [ $DEBUG -eq 1 ]; then echo "Evaluating \"$ADJ\": $model-$space-$almParam"; fi
-      python $compute_cosines -t $outDir/$ADJ/models/alm_an-$space-$almParam.mat -s $dataDir/$space.matrix $dspace > $outDir/$ADJ/tmp/alm-$space.cosines
-      python $find_rank_of_observed_equivalent -i$outDir/$ADJ/tmp/alm-$space.cosines -o$outDir/$ADJ/eval/alm-$space-$almParam -r$rowCount -t
-      if [ $DEBUG -eq 1 ]; then echo "    ... done"; fi
-  fi
-
-  #--------------------------------------------------------
-
-  if [ $DEBUG -eq 0 ]; then rm $outDir/$ADJ/tmp/; fi
-
-done
-
-if [ $DEBUG -eq 1 ]; then echo ""; echo "[end]"; fi
+if [ $DEBUG -eq 1 ]; then echo ""; echo "[end] `basename $0`"; fi
 
 
