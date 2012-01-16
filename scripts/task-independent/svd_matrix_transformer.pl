@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/opt/perl/bin/perl -w
 
 use strict "vars";
 use Getopt::Std;

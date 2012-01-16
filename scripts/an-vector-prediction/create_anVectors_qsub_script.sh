@@ -55,7 +55,7 @@ echo "sh $file_prep $anFile $outDir $dataDir" >> $outDir/anVectors-full-run.sh
 echo "" >> $outDir/anVectors-full-run.sh
 
 # Baseline models (adj and noun only)
-for model in adj ns; do
+for model in adj-only ns-only; do
     echo "## Commands for $model models" >> $outDir/anVectors-full-run.sh
     for space in reduced full; do
 	echo "sh $generate_vectors $anFile $outDir $dataDir $model $space nonnormalized none" >> $outDir/anVectors-full-run.sh

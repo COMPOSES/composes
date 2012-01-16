@@ -8,8 +8,14 @@ LC_ALL=C
 
 ## Global Parameter Settings ##
 
+if [ ! -n "$1" ]; then
+    echo "Error: Invalid number of arguments"
+    echo "Usage():   `basename $0` [output-directory]"
+    exit 65
+    fi
+
 ## Set the directory where the python script coocExtraction.py will print to
-d="cooc.output-jnvr"
+lchr=`expr substr $1 ${#1} 1`; if [ "$lchr" = "/" ]; then d="${1%?}"; else d="$1"; fi
 if [ ! -d $d ]; then mkdir $d; fi
 
 ## --------------------------------
@@ -30,6 +36,11 @@ gzip $d/tuples.fqs
 ## Calculate the Log Frequency of the tuples
 zcat $d/tuples.fqs.gz | python util/coocScores.LogFq.py
 
+## Calculate the Local Mutual Information of the tuples
+if [ ! -d $d/lmi_core_matrix]; then mkdir $d/lmi_core_matrix; fi
+python util/coocScores.LMI.py $d/fqs.all.gz $d/lmi_core_matrix > $d/lmi.all
+gzip $d/lmi.all
+
 ## Sort and get Unique Count of all elements
 ## Note, elements are {N, A, ANs, V, Adv} in the corpus
 zcat $d/extracted-files/elements*.gz | python util/element_frequencies.py
@@ -38,4 +49,4 @@ mv $d/elements.fqs.gz $d/extracted-files/elements.fqs_unsorted.gz
 mv $d/temp.elements.fqs $d/elements.fqs
 gzip $d/elements.fqs
 
-echo "done!"
+echo; echo "[end] `basename $0`"
