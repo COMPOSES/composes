@@ -1,3 +1,4 @@
+#$ -wd /COMPOSES/commons/scripts/semantic-space-construction
 #$ -S /bin/bash
 #$ -j y
 
@@ -77,10 +78,9 @@ svd_matrix_transformer="../task-independent/svd_matrix_transformer.pl"
 
 #---------------------------------------
 
-echo "[begin] `basename $0`"
+echo "[begin] `basename $0`"; echo
 
 if [ $getVocab -eq 1 ]; then
-	echo ""
 	echo "[1] Adjectives and Nouns"
 
 	echo "    extracting Core Vocabulary..."
@@ -95,11 +95,10 @@ if [ $getVocab -eq 1 ]; then
 
 	cat util/aamp-rg.ns > $d/a-and-n-sets/aamp-rg.ns
 
-	echo "    done!"
+	echo "    done!"; echo
 
 	#---------------------------------------
 
-	echo ""
 	echo "[2] AN Datasets"
 
 	# For Test Set: 
@@ -117,27 +116,32 @@ if [ $getVocab -eq 1 ]; then
 	$filter_by_field -s $d/an-sets/attested.ans tmp.Cartesian.Product | cut -f1 | sort -T . > $d/an-sets/unattested.ans
 	awk -v number=$anFreq '$2 >= number' tmp.target.ans | cut -f1 | sort -T . > $d/an-sets/filtered-attested.ans
 	
-	# For each target adjective, make sure we have at least 100 ANs for the training data
+	# For each target adjective, make sure we have at least 100 random ANs for the training data
 	# Note, not including the ml.ans and the color.ans
 	> tmp.min-training.ans
 	for ADJ in `cat $d/a-and-n-sets/target.adjs`; do
 	    cat $d/an-sets/ml.ans $d/an-sets/color.ans | $filter_by_field -s - $d/an-sets/filtered-attested.ans | egrep "^$ADJ" | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -100 | cut -f2 | sort -T . >>  tmp.min-training.ans
 	done
 
-	echo "    extracting Training, Test, Devel and Unused AN datasets..."
-	declare -i a=`wc -l $d/an-sets/filtered-attested.ans | cut -f1 -d' '`
+	echo "    extracting Development AN dataset..."
+	# For each target adjective, get a random 10 ANs for the devel dataset
+	# Note, not including the ml.ans, color.ans or tmp.min-training.ans
+	> $d/an-sets/devel.ans
+	for ADJ in `cat $d/a-and-n-sets/target.adjs`; do
+	    cat $d/an-sets/ml.ans $d/an-sets/color.ans tmp.min-training.ans | $filter_by_field -s - $d/an-sets/filtered-attested.ans | egrep "^$ADJ" | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -10 | cut -f2 | sort -T . >>  $d/an-sets/devel.ans
+	done
+
+	echo "    extracting Training, Test and Unused AN datasets..."
+	declare -i a=`$filter_by_field -s $d/an-sets/devel.ans $d/an-sets/filtered-attested.ans | wc -l | cut -f1 -d' '`
 	declare -i b=`wc -l tmp.min-training.ans | cut -f1 -d' '`
-	echo "$a*.50-$b" | bc -l > tmp
+	echo "$a*.60-$b" | bc -l > tmp
 	declare -i trainingANcount=`cat tmp | cut -f1 -d'.'`
 	echo "$a*.30" | bc -l > tmp
 	declare -i testANcount=`cat tmp | cut -f1 -d'.'`
-	echo "$a*.10" | bc -l > tmp
-	declare -i develANcount=`cat tmp | cut -f1 -d'.'`
 	rm tmp
 
-	cat $d/an-sets/ml.ans $d/an-sets/color.ans tmp.min-training.ans | $filter_by_field -s - $d/an-sets/filtered-attested.ans | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -$trainingANcount | cut -f2 | cat - tmp.min-training.ans | sort -T . > $d/an-sets/training.ans
-	$filter_by_field -s $d/an-sets/training.ans $d/an-sets/filtered-attested.ans | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -$testANcount | cut -f2 | cat - $d/an-sets/ml.ans $d/an-sets/color.ans | sort -T . | uniq  > $d/an-sets/test.ans
-	cat $d/an-sets/test.ans $d/an-sets/training.ans | $filter_by_field -s - $d/an-sets/filtered-attested.ans | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -$develANcount | cut -f2 | sort -T .  > $d/an-sets/devel.ans
+	cat $d/an-sets/ml.ans $d/an-sets/color.ans tmp.min-training.ans $d/an-sets/devel.ans | $filter_by_field -s - $d/an-sets/filtered-attested.ans | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -$trainingANcount | cut -f2 | cat - tmp.min-training.ans | sort -T . > $d/an-sets/training.ans
+	cat $d/an-sets/devel.ans $d/an-sets/training.ans | $filter_by_field -s - $d/an-sets/filtered-attested.ans | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -$testANcount | cut -f2 | cat - $d/an-sets/ml.ans $d/an-sets/color.ans | sort -T . | uniq  > $d/an-sets/test.ans
 	cat $d/an-sets/test.ans $d/an-sets/training.ans $d/an-sets/devel.ans | sort -T . > $d/an-sets/sem-space.ans
 	$filter_by_field -s $d/an-sets/sem-space.ans $d/an-sets/filtered-attested.ans | sort -T . > $d/an-sets/unused.ans
 	
@@ -146,19 +150,19 @@ if [ $getVocab -eq 1 ]; then
 	zcat $cooc/elements.fqs.gz | $filter_by_field tmp.random.ans - | awk -v number=$anFreq '$2 >= number' | sort -T . | uniq > tmp.random.ans.attested
 	cat $d/an-sets/unused.ans $d/an-sets/sem-space.ans | $filter_by_field -s - tmp.random.ans.attested | gawk 'BEGIN{srand()}{print rand() "\t" $0}' | sort -T . | head -3500 | cut -f2 | sort -T . > $d/an-sets/3500.ans
 	
-	echo "    done!"
+	echo "    done!"; echo
 
 	#---------------------------------------
 
-	echo ""
 	echo "[3] Extendend Vocabulary"
 	echo "    putting together elements to include in the Extended Vocabulary..."
 	cat $d/a-and-n-sets/core.adjs $d/a-and-n-sets/core.ns $d/a-and-n-sets/aamp-rg.ns $d/a-and-n-sets/ml.adjs-and-ns $d/an-sets/sem-space.ans $d/an-sets/3500.ans | sort -T . | uniq > $d/target.rows
-	echo "    done!"
+	
+	echo "    done!"; echo
 	
 	# cleanup tmp files
 	rm tmp.*
-	fi
+fi
 
 #---------------------------------------
 
@@ -171,7 +175,6 @@ fi
 #---------------------------------------
 
 if [ $buildSemSpace -eq 1 ]; then
-	echo ""
 	echo "[4] Build Semantic Space"
 
 	echo "    getting columns: $column_dims most frequently cooccurring elements with POS in [$col_pos] (leaving out those in top 300 all POS cooccurrences)..."
@@ -179,19 +182,16 @@ if [ $buildSemSpace -eq 1 ]; then
 	# filter with all POS in cooccurrence tuples file
 	zcat $cooc/fqs.all.gz | gawk '$2~/.../' | $filter_by_field $d/target.rows - | cut -f2 | sort -T . | uniq -c | gawk '{print $2 "\t" $1}' | sort -nrk2 -T . > tmp.relevant.column.type.counts
 	cat tmp.relevant.column.type.counts | tail -n+300 | cut -f1 | egrep "\-[$col_pos]$" | head -$column_dims | sort -T . > $d/target.columns
-#	cat tmp.relevant.column.type.counts | tail -n+300 | gawk '$1~/-[vjnr]$/' | head -$column_dims | cut -f1 | sort -T . > $d/target.columns
 
 	zcat $cooc/$fq_val.all.gz | $filter_by_field -f2 $d/target.columns - > $d/$fq_val.sub
 	if [ -s $d/$fq_val.sub.gz ]; then rm $d/$fq_val.sub.gz; fi
 	gzip $d/$fq_val.sub
 	rm tmp.*
 
-	echo "    done"
-
-	echo ""
+	echo
 	echo "    Rows: \"target.rows\""
 	echo "    Columns: \"target.columns\""
-	echo ""
+	echo
 	echo "    building the non-reduced matrix from the tuples..."
 
 	## Split the rows into 8 smaller parts for memory reasons
@@ -212,13 +212,14 @@ if [ $buildSemSpace -eq 1 ]; then
 	gzip $d/full.matrix
 
 	rm tmp*
-	echo "    done"
-	fi
+
+	echo "    done!"; echo
+
+fi
 
 #---------------------------------------
 
 if [ $svdMatrix -eq 1 ]; then
-	echo ""
 	echo "[5] SVD Reduction"
 
 	if [ ! -s $d/full.matrix ] && [ -s $d/full.matrix.gz ]; then gzip -d $d/full.matrix.gz; fi
@@ -267,12 +268,14 @@ if [ $svdMatrix -eq 1 ]; then
 	echo "    ...done with tmp.reduced.ah.mat"
 
 	cat $d/svd.out.mat tmp.reduced.a*.mat | sort -T . | uniq > $d/reduced.matrix
-	echo "    done!"
+
+	echo "    done!"; echo
 
 	if [ -s tmp.reduced.ah.mat ]; then 
 	  rm tmp*
 
 	  if [ $copySpaces -eq 1 ]; then
+	      echo "    copying semantic spaces and data to:"; echo "    $copyDir/"; echo
 	      if [ -s $copyDir/full.matrix ]; then
 		  gzip $copyDir/reduced.matrix; gzip $copyDir/full.matrix
 		  mv $copyDir/*.matrix.gz $copyDir/PREVIOUS-VERSION/
@@ -286,10 +289,10 @@ if [ $svdMatrix -eq 1 ]; then
 	      gzip $d/reduced.matrix; gzip $d/full.matrix
 	  fi
 	fi	 
-	echo ""
-	echo "done!"
+	
+	echo "done!"; echo
 fi	
 
 #---------------------------------------
 
-echo; echo "[end] `basename $0`"
+echo "[end] `basename $0`"; echo
