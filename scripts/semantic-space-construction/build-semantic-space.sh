@@ -41,7 +41,7 @@ fq_val='lmi'	# which type of values to populate semantic space
 copySpaces=0	# if = 1 : Copy the Semantic Spaces built here to an-vector-pipeline directory
 		# ** NOTE! This will compress the current Sem Spaces and MOVE them to the directory $copyDir/PREVIOUS-VERSION/
 		# They will become the Sem Spaces used in the an-vector-pipeline (AN vector prediction)
-#copyDir="/an-vector-pipeline/data"	# You must specify path to copyDir if copySpaces = 1!
+#copyDir="/an-vector-pipeline/data"	# You must specify [full] path to copyDir if copySpaces = 1!
 
 
 #---------------------------------------
