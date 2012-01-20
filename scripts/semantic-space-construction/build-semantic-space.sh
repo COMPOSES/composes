@@ -199,14 +199,14 @@ if [ $buildSemSpace -eq 1 ]; then
 	echo "$a/8" | bc -l > tmp
 	declare -i s=`cat tmp | cut -f1 -d'.'`+2
 	split -l$s $d/target.rows tmp.target.rows.
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.aa - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.aa -
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ab - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.ab -
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ac - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.ac -
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ad - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.ad -
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ae - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.ae -
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.af - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.af -
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ag - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.ag -
-	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ah - | $filter_by_field -f2 $d/target.columns - | $build_matrix_from_tuples tmp.nonreduced.ah -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.aa - | $build_matrix_from_tuples tmp.nonreduced.aa -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ab - | $build_matrix_from_tuples tmp.nonreduced.ab -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ac - | $build_matrix_from_tuples tmp.nonreduced.ac -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ad - | $build_matrix_from_tuples tmp.nonreduced.ad -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ae - | $build_matrix_from_tuples tmp.nonreduced.ae -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.af - | $build_matrix_from_tuples tmp.nonreduced.af -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ag - | $build_matrix_from_tuples tmp.nonreduced.ag -
+	zcat $d/$fq_val.sub.gz | $filter_by_field tmp.target.rows.ah - | $build_matrix_from_tuples tmp.nonreduced.ah -
 
 	cat tmp.nonreduced.aa.mat tmp.nonreduced.ab.mat tmp.nonreduced.ac.mat tmp.nonreduced.ad.mat tmp.nonreduced.ae.mat tmp.nonreduced.af.mat tmp.nonreduced.ag.mat tmp.nonreduced.ah.mat | sort -T . | uniq > $d/full.matrix
 	gzip $d/full.matrix
