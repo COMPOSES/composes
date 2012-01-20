@@ -8,21 +8,17 @@ LC_ALL=C
 
 ## Semantic Space Quality Evaluation Experiments ##
 
-## USAGE(): sh run_quality_evaluation_experiments.sh [output-directory] [testmodelDir]
+## USAGE(): sh run_quality_evaluation_experiments.sh [output-directory]
 # 
 # $1: output-directory (full path)
-# $2: testmodelDir (full path)
+#
 
 ## Read command line arguments
 if [ ! -n "$2" ]; then echo "Usage: `basename $0` [output-directory] [testmodelDir]"; exit 65; fi
 lchr=`expr substr $1 ${#1} 1`
 if [ "$lchr" = "/" ]; then dir="${1%?}"; else dir="$1"; fi
-lchr=`expr substr $2 ${#2} 1`
-if [ "$lchr" = "/" ]; then testmodelDir="${2%?}"; else testmodelDir="$2"; fi
 
 filter_by_field='../../task-independent/filter_by_field.pl'
-build_matrix_from_tuples='../../task-independent/build_matrix_from_tuples.pl'
-project_onto_v='../../task-independent/project_onto_v.R'
 do_correlations_of_models_with_list='../../task-specific/do_correlations_of_models_with_list.pl'
 do_clustering_experiment='../../task-specific/do_clustering_experiment.pl'
 rg_gold='util/rubenstein-goodeneough.txt'
@@ -66,42 +62,6 @@ perl $do_correlations_of_models_with_list 0 /mnt/data2/dm/scripts $dir/quality-e
 echo ""
 echo "Results of Mitchell & Lapata AN correlations experiment:"
 grep "^[\[0]" $dir/quality-eval/ml.results/R.out
-
-#----------------------------------------------------------
-
-#echo ""
-echo "[5] M&L Experiments with Predicted Vectors"
-
-echo ""
-echo "..... M&L in alm-reduced-10:"
-cat $testmodelDir/*-j/models/alm_an-reduced-10.mat | perl -ane 's/^p\.//; print' - | $filter_by_field $dir/quality-eval/elements - | sort -T . > $dir/quality-eval/alm-reduced-10.mat
-perl $do_correlations_of_models_with_list 0 /mnt/data2/dm/scripts $dir/quality-eval/ml_alm-reduced-10.results $ml_gold $dir/quality-eval/alm-reduced-10.mat >$dir/quality-eval/ml_alm-reduced-10.eval.out 2> $dir/quality-eval/ml_alm-reduced-10.eval.err 
-grep "^[\[0]" $dir/quality-eval/ml_alm-reduced-10.results/R.out
-
-echo ""
-echo "..... M&L in lm-reduced-200:"
-cat $testmodelDir/*-j/models/lm_an-reduced-200.mat | $filter_by_field $dir/quality-eval/elements - | sort -T . > $dir/quality-eval/lm-reduced-200.mat
-perl $do_correlations_of_models_with_list 0 /mnt/data2/dm/scripts $dir/quality-eval/ml_lm-reduced-200.results $ml_gold $dir/quality-eval/lm-reduced-200.mat >$dir/quality-eval/ml_lm-reduced-200.eval.out 2> $dir/quality-eval/ml_lm-reduced-200.eval.err 
-grep "^[\[0]" $dir/quality-eval/ml_lm-reduced-200.results/R.out
-
-echo ""
-echo "..... M&L in add-reduced-n-3a7n:"
-cat $testmodelDir/*-j/models/add_an-reduced-n-3a7n.mat | $filter_by_field $dir/quality-eval/elements - | sort -T . > $dir/quality-eval/add-reduced-n-3a7n.mat
-perl $do_correlations_of_models_with_list 0 /mnt/data2/dm/scripts $dir/quality-eval/ml_add-reduced-n-3a7n.results $ml_gold $dir/quality-eval/add-reduced-n-3a7n.mat >$dir/quality-eval/ml_add-reduced-n-3a7n.eval.out 2> $dir/quality-eval/ml_add-reduced-n-3a7n.eval.err 
-grep "^[\[0]" $dir/quality-eval/ml_add-reduced-n-3a7n.results/R.out
-
-echo ""
-echo "..... M&L in mult-full-n:"
-cat $testmodelDir/*-j/models/mult_an-full-n.mat | $filter_by_field $dir/quality-eval/elements - | sort -T . > $dir/quality-eval/mult-full-n.mat
-perl $do_correlations_of_models_with_list 0 /mnt/data2/dm/scripts $dir/quality-eval/ml_mult-full-n.results $ml_gold $dir/quality-eval/mult-full-n.mat >$dir/quality-eval/ml_mult-full-n.eval.out 2> $dir/quality-eval/ml_mult-full-n.eval.err 
-grep "^[\[0]" $dir/quality-eval/ml_mult-full-n.results/R.out
-
-echo ""
-echo "..... M&L in dl-reduced-n-20-na:"
-cat $testmodelDir/*-j/models/dl_an-reduced-n-20-na.mat | $filter_by_field $dir/quality-eval/elements - | sort -T . > $dir/quality-eval/dl-reduced-n-20-na.mat
-perl $do_correlations_of_models_with_list 0 /mnt/data2/dm/scripts $dir/quality-eval/ml_dl-reduced-n-20-na.results $ml_gold $dir/quality-eval/dl-reduced-n-20-na.mat >$dir/quality-eval/ml_dl-reduced-n-20-na.eval.out 2> $dir/quality-eval/ml_dl-reduced-n-20-na.eval.err 
-grep "^[\[0]" $dir/quality-eval/ml_dl-reduced-n-20-na.results/R.out
-
 
 #----------------------------------------------------------
 
