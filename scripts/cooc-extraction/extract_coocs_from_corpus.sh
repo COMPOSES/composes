@@ -32,7 +32,6 @@ gzip $d/fqs.all
 
 ## Calculate the Log Frequency of the tuples
 zcat $d/fqs.all.gz | python util/coocScores.LogFq.py
-gzip $d/logfq.all
 
 ## Calculate the Local Mutual Information of the tuples
 if [ ! -d $d/lmi_core_matrix]; then mkdir $d/lmi_core_matrix; fi
