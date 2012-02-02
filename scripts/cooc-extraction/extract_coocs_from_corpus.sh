@@ -1,10 +1,7 @@
 #$ -S /bin/bash
 #$ -j y
 
-. /etc/profile
-. $HOME/.bash_profile
 LC_ALL=C 
-
 
 ## Global Parameter Settings ##
 
@@ -30,11 +27,12 @@ zcat bnc.xml.gz ukwac*.xml.gz wikipedia-*.xml.gz | python util/coocExtraction.py
 ## Sort and get Unique Count of all Tuples
 ## Note, Tuples are co-occurring element pairs of the format:
 ## {N, A, ANs}  {N, A, V, Adv}
-zcat $d/extracted-files/tuples*.gz | sort -T . | uniq -c | gawk '{print $2 "\t" $3 "\t" $1}' > $d/tuples.fqs
-gzip $d/tuples.fqs
+zcat $d/extracted-files/tuples*.gz | sort -T . | uniq -c | gawk '{print $2 "\t" $3 "\t" $1}' > $d/fqs.all
+gzip $d/fqs.all
 
 ## Calculate the Log Frequency of the tuples
-zcat $d/tuples.fqs.gz | python util/coocScores.LogFq.py
+zcat $d/fqs.all.gz | python util/coocScores.LogFq.py
+gzip $d/logfq.all
 
 ## Calculate the Local Mutual Information of the tuples
 if [ ! -d $d/lmi_core_matrix]; then mkdir $d/lmi_core_matrix; fi
