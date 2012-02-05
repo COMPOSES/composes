@@ -110,7 +110,8 @@ if [ $getVocab -eq 1 ]; then
 	
 	echo "    generating AN pairs from the Target Vocabulary..."
 	$filter_by_field -s util/problematic-adjs.txt $d/a-and-n-sets/target.adjs > tmp.target.adjs
-	python $getCartProduct tmp.target.adjs $d/a-and-n-sets/target.ns > tmp.Cartesian.Product
+	$filter_by_field -s util/problematic-ns.txt $d/a-and-n-sets/target.ns > tmp.target.ns
+	python $getCartProduct tmp.target.adjs $d/a-and-n-sets/tmp.target.ns > tmp.Cartesian.Product
 	zcat $cooc/elements.fqs.gz | $filter_by_field tmp.Cartesian.Product - | sort -T . > tmp.target.ans
 	cut -f1 tmp.target.ans > $d/an-sets/attested.ans
 	$filter_by_field -s $d/an-sets/attested.ans tmp.Cartesian.Product | cut -f1 | sort -T . > $d/an-sets/unattested.ans
@@ -223,7 +224,7 @@ if [ $svdMatrix -eq 1 ]; then
 	echo "[5] SVD Reduction"
 
 	if [ ! -s $d/full.matrix ] && [ -s $d/full.matrix.gz ]; then gzip -d $d/full.matrix.gz; fi
-	if [ -s $d/reduced.matrix.gz ]; then rm $d/reduced.matrix.gz; fi
+	if [ -s $d/300.matrix.gz ]; then rm $d/300.matrix.gz; fi
 	if [ -d $d/svdoutdir ]; then rm -r $d/svdoutdir; fi
 
 	echo "    getting Adj and Noun elements for SVD..."
@@ -267,7 +268,7 @@ if [ $svdMatrix -eq 1 ]; then
 	R --slave --args tmp.not.yet.in.reduced.ah $d/Vt tmp.reduced.ah.mat < $project_onto_v
 	echo "    ...done with tmp.reduced.ah.mat"
 
-	cat $d/svd.out.mat tmp.reduced.a*.mat | sort -T . | uniq > $d/reduced.matrix
+	cat $d/svd.out.mat tmp.reduced.a*.mat | sort -T . | uniq > $d/300.matrix
 
 	echo "    done!"; echo
 
@@ -277,7 +278,7 @@ if [ $svdMatrix -eq 1 ]; then
 	  if [ $copySpaces -eq 1 ]; then
 	      echo "    copying semantic spaces and data to:"; echo "    $copyDir/"; echo
 	      if [ -s $copyDir/full.matrix ]; then
-		  gzip $copyDir/reduced.matrix; gzip $copyDir/full.matrix
+		  gzip $copyDir/300.matrix; gzip $copyDir/full.matrix
 		  mv $copyDir/*.matrix.gz $copyDir/PREVIOUS-VERSION/
 		  mv $copyDir/all.rows $copyDir/PREVIOUS-VERSION/
 		  mv $copyDir/an-sets/* $copyDir/PREVIOUS-VERSION/an-sets/
@@ -285,8 +286,8 @@ if [ $svdMatrix -eq 1 ]; then
 	      if [ ! -d $copyDir/an-sets ]; then mkdir $copyDir/an-sets; fi
 	      cp $d/an-sets/* $copyDir/an-sets/
 	      cp $d/*.matrix $copyDir/
-	      cut -f1 $d/reduced.matrix > $copyDir/all.rows
-	      gzip $d/reduced.matrix; gzip $d/full.matrix
+	      cut -f1 $d/300.matrix > $copyDir/all.rows
+	      gzip $d/300.matrix; gzip $d/full.matrix
 	  fi
 	fi	 
 	
