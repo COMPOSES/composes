@@ -262,7 +262,6 @@ academic-j
 academic-n
 academy-n
 accelerate-v
-accelerated-j
 acceleration-n
 accent-n
 accentuate-v
@@ -385,7 +384,6 @@ adolescent-j
 adolescent-n
 adopt-v
 adoption-n
-adore-v
 adorn-v
 adult-j
 adult-n
@@ -526,7 +524,6 @@ ally-v
 almost-r
 alone-r
 along-r
-alot-n
 alpha-n
 alphabet-n
 alphabetical-j
@@ -566,6 +563,7 @@ amenity-n
 ammunition-n
 amount-n
 amount-v
+amp-n
 ample-j
 amplifier-n
 amplify-v
@@ -633,7 +631,6 @@ anti-social-j
 anti-war-j
 antibiotic-n
 antibody-n
-antic-n
 anticipate-v
 anticipated-j
 anticipation-n
@@ -735,6 +732,7 @@ armament-n
 armed-j
 armor-n
 armour-n
+armoured-j
 army-n
 around-r
 arouse-v
@@ -810,7 +808,6 @@ assumption-n
 assurance-n
 assure-v
 asthma-n
-astonish-v
 astonishing-j
 astound-v
 astrology-n
@@ -1152,6 +1149,7 @@ blogs-n
 bloke-n
 blood-n
 bloody-j
+bloom-n
 blow-n
 blow-v
 blue-j
@@ -1386,6 +1384,7 @@ calling-n
 calm-j
 calm-n
 calm-v
+calorie-n
 camera-n
 camp-n
 camp-v
@@ -1461,7 +1460,6 @@ cartridge-n
 carve-v
 cascade-n
 cash-n
-cash-v
 casino-n
 cassette-n
 cast-n
@@ -1682,6 +1680,7 @@ classified-j
 classify-v
 classroom-n
 clause-n
+claw-n
 clay-n
 clean-j
 clean-v
@@ -1747,7 +1746,6 @@ co-ordinate-v
 co-ordination-n
 co-ordinator-n
 coach-n
-coach-v
 coaching-n
 coal-n
 coalition-n
@@ -1758,6 +1756,7 @@ coastline-n
 coat-n
 coating-n
 cocaine-n
+cockpit-n
 cocktail-n
 code-n
 code-v
@@ -1976,6 +1975,7 @@ conducive-j
 conduct-n
 conduct-v
 conductor-n
+conduit-n
 cone-n
 confer-v
 conference-n
@@ -2080,8 +2080,8 @@ consuming-n
 consumption-n
 contact-n
 contact-v
-contain-v
 container-n
+containment-n
 contaminate-v
 contaminated-j
 contamination-n
@@ -2356,7 +2356,6 @@ current-n
 currently-r
 curriculum-n
 curse-n
-curse-v
 curtail-v
 curtain-n
 curve-n
@@ -2663,6 +2662,7 @@ dialogue-n
 diameter-n
 diamond-n
 diary-n
+dice-n
 dictate-v
 dictator-n
 dictatorship-n
@@ -2913,7 +2913,6 @@ download-n
 download-v
 downloadable-j
 downloaded-v
-downloading-v
 downloads-n
 downstairs-n
 downstream-j
@@ -2983,7 +2982,6 @@ dump-n
 dump-v
 dune-n
 duo-n
-duplicate-j
 duplicate-v
 duplication-n
 durability-n
@@ -3075,6 +3073,7 @@ eject-v
 el-n
 elaborate-j
 elaborate-v
+elastic-j
 elbow-n
 elder-j
 elder-n
@@ -3162,6 +3161,7 @@ enable-v
 enact-v
 enactment-n
 encapsulate-v
+encircle-v
 enclose-v
 enclosure-n
 encode-v
@@ -3309,6 +3309,7 @@ eschew-v
 escort-n
 escort-v
 esoteric-j
+especially-r
 espouse-v
 essay-n
 essence-n
@@ -3319,7 +3320,6 @@ established-j
 establishment-n
 estate-n
 esteem-n
-esteem-v
 estimate-n
 estimate-v
 estimated-j
@@ -3510,6 +3510,7 @@ extreme-j
 extreme-n
 extremely-r
 extremist-n
+extremity-n
 eye-n
 fabric-n
 fabricate-v
@@ -3672,6 +3673,7 @@ file-n
 file-v
 filing-n
 fill-v
+filling-n
 film-n
 film-v
 filmmaker-n
@@ -3754,7 +3756,6 @@ flavour-n
 flaw-n
 flaw-v
 flawed-j
-fledgling-j
 flee-v
 fleet-n
 flesh-n
@@ -3787,6 +3788,8 @@ fluctuation-n
 fluent-j
 fluid-j
 fluid-n
+fluorescent-j
+flush-j
 flush-v
 flute-n
 flux-n
@@ -3835,6 +3838,7 @@ forecast-n
 forecast-v
 forefront-n
 foreground-n
+forehead-n
 foreign-j
 foreigner-n
 foremost-j
@@ -3942,7 +3946,6 @@ front-j
 front-n
 front-v
 frontier-n
-frontline-n
 frozen-j
 fruit-n
 fruitful-j
@@ -4104,6 +4107,7 @@ glossy-j
 glove-n
 glow-n
 glowing-j
+glucose-n
 glue-n
 go-n
 goal-n
@@ -4126,7 +4130,6 @@ gospel-n
 gossip-n
 govern-v
 governance-n
-government-n
 governmental-j
 governor-n
 gown-n
@@ -4304,7 +4307,6 @@ harvest-v
 harvesting-n
 hassle-n
 hasten-v
-hastily-r
 hat-n
 hatch-v
 hate-n
@@ -4622,7 +4624,6 @@ implicate-v
 implication-n
 implicit-j
 implicitly-r
-implied-j
 imply-v
 import-n
 import-v
@@ -4726,7 +4727,6 @@ induce-v
 induction-n
 indulge-v
 industrial-j
-industrialist-n
 industry-n
 ineffective-j
 inefficient-j
@@ -4750,6 +4750,7 @@ inferior-j
 infiltrate-v
 infinite-j
 infinitely-r
+inflammatory-j
 inflate-v
 inflation-n
 inflict-v
@@ -4799,7 +4800,6 @@ innate-j
 inner-j
 innocence-n
 innocent-j
-innovate-v
 innovation-n
 innovative-j
 innovator-n
@@ -4861,7 +4861,6 @@ insulate-v
 insulation-n
 insulin-n
 insult-n
-insult-v
 insurance-n
 insure-v
 insurer-n
@@ -5139,6 +5138,7 @@ lastly-r
 late-r
 lately-r
 latent-j
+later-r
 lateral-j
 latitude-n
 latter-j
@@ -5179,6 +5179,7 @@ learner-n
 learning-n
 lease-n
 lease-v
+least-j
 least-r
 leather-n
 leave-n
@@ -5214,6 +5215,7 @@ lengthy-j
 lens-n
 lesbian-j
 lesbian-n
+lesion-n
 less-j
 less-r
 lessen-v
@@ -5399,7 +5401,6 @@ lovely-j
 lover-n
 loving-j
 low-cost-j
-low-j
 low-level-j
 low-n
 low-r
@@ -5442,7 +5443,6 @@ magnificent-j
 magnify-v
 magnitude-n
 maid-n
-maiden-j
 mail-n
 mail-v
 mailing-n
@@ -5539,6 +5539,7 @@ martyr-n
 marvellous-j
 mask-n
 mask-v
+masonry-n
 mass-j
 mass-n
 massacre-n
@@ -5665,8 +5666,10 @@ metropolitan-j
 micro-n
 microphone-n
 microscope-n
+microscopic-j
 microwave-n
 mid-j
+middle-aged-j
 middle-class-j
 middle-j
 middle-n
@@ -5706,6 +5709,7 @@ mineral-n
 mingle-v
 mini-j
 miniature-j
+miniature-n
 minimal-j
 minimise-v
 minimize-v
@@ -5844,12 +5848,10 @@ mouse-n
 mouth-n
 move-n
 movement-n
-mover-n
 movie-n
 mph-n
 ms-j
 much-j
-much-need-v
 mud-n
 muddy-j
 multi-disciplinary-j
@@ -6004,6 +6006,7 @@ node-n
 noise-n
 noisy-j
 nominal-j
+nominally-r
 nominate-v
 nomination-n
 nominee-n
@@ -6102,7 +6105,6 @@ obtain-v
 obvious-j
 obviously-r
 occasion-n
-occasion-v
 occasional-j
 occasionally-r
 occupancy-n
@@ -6274,7 +6276,6 @@ outside-j
 outside-n
 outsider-n
 outskirt-n
-outsourcing-n
 outstanding-j
 outward-r
 outweigh-v
@@ -6332,6 +6333,7 @@ packet-n
 packing-n
 pact-n
 pad-n
+pad-v
 pagan-n
 page-n
 pain-n
@@ -6480,6 +6482,7 @@ perceive-v
 percent-n
 percentage-n
 perception-n
+perch-v
 percussion-n
 perennial-j
 perfect-j
@@ -6583,6 +6586,7 @@ pier-n
 pierce-v
 pig-n
 pigeon-n
+pigment-n
 pile-n
 pile-v
 pilgrim-n
@@ -6646,6 +6650,7 @@ platform-n
 platinum-n
 plausible-j
 play-n
+playback-n
 player-n
 playful-j
 playground-n
@@ -6735,7 +6740,6 @@ port-j
 port-n
 portable-j
 portal-n
-porter-n
 portfolio-n
 portion-n
 portrait-n
@@ -6841,7 +6845,6 @@ prejudice-n
 preliminary-j
 premature-j
 premier-j
-premier-n
 premier-v
 premiere-n
 premise-n
@@ -7007,7 +7010,6 @@ promotional-j
 prompt-j
 prompt-v
 promptly-r
-promulgate-v
 prone-j
 pronounce-v
 pronounced-j
@@ -7301,7 +7303,6 @@ recipe-n
 recipient-n
 reciprocal-j
 recite-v
-reckless-j
 reckon-v
 reclaim-v
 recognisable-j
@@ -7440,7 +7441,6 @@ relationship-n
 relative-j
 relative-n
 relatively-r
-relaunch-v
 relax-v
 relaxation-n
 relaxing-j
@@ -7482,7 +7482,6 @@ remedial-j
 remedy-n
 remedy-v
 remember-v
-remembrance-n
 remind-v
 reminder-n
 reminiscent-j
@@ -7490,6 +7489,7 @@ remit-n
 remnant-n
 remote-j
 remotely-r
+removable-j
 removal-n
 remove-v
 remuneration-n
@@ -7926,7 +7926,6 @@ scream-v
 screen-n
 screen-v
 screening-n
-screenplay-n
 screw-n
 screw-v
 script-n
@@ -8147,6 +8146,7 @@ shrink-v
 shrub-n
 shun-v
 shut-v
+shutter-n
 shuttle-n
 shy-j
 sibling-n
@@ -8400,7 +8400,6 @@ speaking-n
 spearhead-v
 spec-n
 special-n
-specialisation-n
 specialise-v
 specialism-n
 specialist-j
@@ -8422,6 +8421,7 @@ specimen-n
 spectacle-n
 spectacular-j
 spectator-n
+spectral-j
 spectrum-n
 speculate-v
 speculation-n
@@ -8679,7 +8679,6 @@ struggle-n
 struggle-v
 stud-n
 studio-n
-study-n
 study-v
 stuff-n
 stuff-v
@@ -8711,7 +8710,6 @@ subordinate-j
 subscribe-v
 subscriber-n
 subscription-n
-subsection-n
 subsequent-j
 subsequently-r
 subset-n
@@ -8722,13 +8720,11 @@ subsistence-n
 substance-n
 substantial-j
 substantially-r
-substantiate-v
 substantive-j
 substitute-n
 substitute-v
 substitution-n
 substrate-n
-subtitle-n
 subtle-j
 subtlety-n
 subtly-r
@@ -8781,7 +8777,6 @@ super-j
 superb-j
 superbly-r
 superficial-j
-superintendent-n
 superior-j
 superiority-n
 supermarket-n
@@ -8924,6 +8919,7 @@ tall-j
 tandem-n
 tangible-j
 tank-n
+tanker-n
 tap-n
 tap-v
 tape-n
@@ -9155,6 +9151,7 @@ title-n
 title-v
 toast-n
 tobacco-n
+today-n
 today-r
 toddler-n
 toe-n
@@ -9203,6 +9200,7 @@ tout-v
 tow-v
 towel-n
 tower-n
+towering-j
 town-n
 township-n
 toxic-j
@@ -9310,6 +9308,7 @@ tricky-j
 trigger-n
 trigger-v
 trilogy-n
+trim-j
 trim-v
 trio-n
 trip-n
@@ -9357,6 +9356,7 @@ turn-n
 turn-v
 turnout-n
 turnover-n
+turret-n
 turtle-n
 tutor-n
 tutor-v
@@ -9455,7 +9455,6 @@ unfair-j
 unfairly-r
 unfamiliar-j
 unfinished-j
-unfit-j
 unfold-v
 unforgettable-j
 unfortunate-j
@@ -9603,6 +9602,7 @@ vampire-n
 van-n
 vandalism-n
 vanish-v
+vapour-n
 variability-n
 variable-j
 variable-n
@@ -9749,6 +9749,7 @@ walk-n
 walk-v
 walker-n
 walking-n
+walkway-n
 wall-n
 walled-j
 wallet-n
@@ -9794,7 +9795,6 @@ wave-n
 wave-v
 wavelength-n
 wax-n
-way-r
 weak-j
 weaken-v
 weakness-n
@@ -9944,9 +9944,9 @@ world-wide-j
 worldwide-j
 worldwide-r
 worm-n
+worn-j
 worry-n
 worry-v
-worrying-j
 worse-r
 worsen-v
 worship-n
