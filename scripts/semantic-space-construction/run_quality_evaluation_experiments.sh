@@ -1,4 +1,4 @@
-#$ -wd /mnt/8tera/shareZBV/data/eva/semantic-space-construction
+#$ -wd /github/COMPOSES/commons/scripts/semantic-space-construction
 #$ -S /bin/bash
 #$ -j y
 
@@ -18,9 +18,9 @@ if [ ! -n "$2" ]; then echo "Usage: `basename $0` [output-directory] [testmodelD
 lchr=`expr substr $1 ${#1} 1`
 if [ "$lchr" = "/" ]; then dir="${1%?}"; else dir="$1"; fi
 
-filter_by_field='../../task-independent/filter_by_field.pl'
-do_correlations_of_models_with_list='../../task-specific/do_correlations_of_models_with_list.pl'
-do_clustering_experiment='../../task-specific/do_clustering_experiment.pl'
+filter_by_field='../task-independent/filter_by_field.pl'
+do_correlations_of_models_with_list='../task-specific/do_correlations_of_models_with_list.pl'
+do_clustering_experiment='../task-specific/do_clustering_experiment.pl'
 rg_gold='util/rubenstein-goodeneough.txt'
 aamp_gold='util/gold-standard.txt'
 ml_gold='util/ml_2010_ans_gold.txt'
@@ -32,7 +32,7 @@ if [ ! -d $dir/quality-eval ]; then mkdir $dir/quality-eval; fi
 ## Get semantic spaces for the target elements
 
 echo "[1] Build matrix with RG, AAMP and M&L targets"
-cat /mnt/data2/dm/data/experiments/rg/rg.elements /mnt/data2/dm/data/experiments/c-b-lc-categorization/aamp_categorization/elements /home/evamaria.vecchi/data/an/ml_2010_ans.txt | sort -T . | uniq > $dir/quality-eval/elements
+cat util/aamp-rg.ns util/ml_2010_ans.txt | sort -T . | uniq > $dir/quality-eval/elements
 zcat $dir/full.matrix.gz | $filter_by_field $dir/quality-eval/elements - > $dir/quality-eval/nonreduced.mat
 zcat $dir/reduced.matrix.gz | $filter_by_field $dir/quality-eval/elements - > $dir/quality-eval/reduced.mat
 
